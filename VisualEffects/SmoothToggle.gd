@@ -4,20 +4,20 @@ extends Node2D
 enum StartMode {
 	On, Off, AnimOn, AnimOff
 }
-@export var _startMode : StartMode = StartMode.AnimOn
+@export var startMode : StartMode = StartMode.AnimOn
 @export var speedIn : float = 3
 @export var speedOut : float = 3
-@export var _easeIn : MathS.EasingMethod
-@export var _easeOut : MathS.EasingMethod
+@export var easeIn : MathS.EasingMethod
+@export var easeOut : MathS.EasingMethod
 var _on
 var _easeP
 
-var selfDestruct : bool = false #calls queueFree upon Toggle Off Finishing.
+@export var selfDestruct : bool = false #calls queueFree upon Toggle Off Finishing.
 
 signal EV_ToggleEnd
 
-func _enter_tree():
-	match _startMode:
+func _ready():
+	match startMode:
 		StartMode.On:
 			_easeP=1
 			_on=true
@@ -57,11 +57,11 @@ func _process(delta):
 	if _on:
 		_easeP+=delta*speedIn
 		_easeP = MathS.Clamp01(_easeP)
-		scale = Vector2.ONE * MathS.Ease(_easeP, _easeIn)
+		scale = Vector2.ONE * MathS.Ease(_easeP, easeIn)
 	else:
 		_easeP-=delta*speedOut
 		_easeP = MathS.Clamp01(_easeP)
-		scale = Vector2.ONE * MathS.Ease(_easeP, _easeOut)
+		scale = Vector2.ONE * MathS.Ease(_easeP, easeOut)
 	
 	if (_easeP == 1 and _on) or (_easeP == 0 and not _on):
 		EV_ToggleEnd.emit(self,_on)
